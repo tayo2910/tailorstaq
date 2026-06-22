@@ -5,6 +5,9 @@ stitch_tailorstaq_ai_management_platform.zip
 # supabase local config
 supabase/
 
+# spec files
+.kiro/
+
 # macOS
 .DS_Store
 
