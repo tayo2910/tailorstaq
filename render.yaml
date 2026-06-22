@@ -1,0 +1,69 @@
+services:
+  - type: web
+    name: tailorstaq-backend
+    runtime: node
+    repo: https://github.com/tayo2910/tailorstaq
+    buildCommand: cd backend && npm install && cd frontend && npm install && npm run build
+    startCommand: cd backend && npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "8000"
+      - key: DB_HOST
+        fromDatabase:
+          name: tailorstaq-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: tailorstaq-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: tailorstaq-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: tailorstaq-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: tailorstaq-db
+          property: password
+      - key: DB_SSL
+        value: "true"
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: tailorstaq-redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: tailorstaq-redis
+          property: port
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRY_SECONDS
+        value: "86400"
+      - key: BCRYPT_COST_FACTOR
+        value: "12"
+      - key: FRONTEND_URL
+        fromService:
+          type: web
+          name: tailorstaq-backend
+          property: host
+
+  - type: redis
+    name: tailorstaq-redis
+    plan: free
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList: []
+
+databases:
+  - name: tailorstaq-db
+    plan: free
+    databaseName: tailorstaq
+    user: tailorstaq_user
+    ipAllowList: []
