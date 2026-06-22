@@ -4,9 +4,11 @@ services:
     runtime: node
     repo: https://github.com/tayo2910/tailorstaq
     buildCommand: cd backend && npm install && cd frontend && npm install && npm run build
-    startCommand: cd backend && npm start
+    startCommand: node backend/src/index.js
     healthCheckPath: /health
     envVars:
+      - key: NODE_VERSION
+        value: "22"
       - key: NODE_ENV
         value: production
       - key: PORT
