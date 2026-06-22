@@ -1,62 +1,34 @@
 <template>
-  <div class="min-h-screen flex flex-col">
+  <div class="min-h-screen flex flex-col bg-background">
     <NavBar />
     <main class="flex-1 flex items-center justify-center px-4">
-      <div v-if="submitted" class="text-center max-w-md">
-        <h2 class="text-2xl font-bold text-brand-dark mb-4">Registration submitted</h2>
-        <p class="text-gray-600">
-          Your shop registration request has been received. We'll review it and notify you
-          once it's approved.
-        </p>
+      <div v-if="submitted" class="text-center max-w-lg">
+        <h2 class="font-display text-headline-md text-primary mb-4">Welcome to TailorStaq</h2>
+        <p class="font-body-md text-on-surface-variant mb-3">Your registration has been submitted successfully. You'll receive an email once your shop is approved.</p>
+        <p class="font-body-md text-on-surface-variant">TailorStaq is a community of tailoring businesses in one marketplace — connecting independent tailors with customers who value quality craftsmanship. Together, we make bespoke fashion accessible to everyone.</p>
       </div>
       <div v-else class="w-full max-w-sm">
-        <h2 class="text-2xl font-bold text-brand-dark mb-6 text-center">Register Your Shop</h2>
+        <h2 class="font-display text-headline-lg-mobile text-on-surface mb-6 text-center">Register Your Shop</h2>
         <ErrorBanner :message="error" @dismiss="error = ''" />
         <form @submit.prevent="handleRegister" class="space-y-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Business Name</label>
-            <input
-              v-model="businessName"
-              required
-              maxlength="100"
-              class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-accent"
-            />
+            <label class="block font-label-md text-label-md text-on-surface mb-1">Business Name</label>
+            <input v-model="businessName" required maxlength="100" class="w-full border border-outline-variant rounded-lg px-4 py-3 focus:ring-1 focus:ring-primary focus:border-primary outline-none bg-surface" />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Contact Email</label>
-            <input
-              v-model="contactEmail"
-              type="email"
-              required
-              class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-accent"
-            />
+            <label class="block font-label-md text-label-md text-on-surface mb-1">Contact Email</label>
+            <input v-model="contactEmail" type="email" required class="w-full border border-outline-variant rounded-lg px-4 py-3 focus:ring-1 focus:ring-primary focus:border-primary outline-none bg-surface" />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-            <input
-              v-model="phone"
-              required
-              class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-accent"
-            />
+            <label class="block font-label-md text-label-md text-on-surface mb-1">Phone</label>
+            <input v-model="phone" required class="w-full border border-outline-variant rounded-lg px-4 py-3 focus:ring-1 focus:ring-primary focus:border-primary outline-none bg-surface" />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-            <textarea
-              v-model="description"
-              required
-              maxlength="500"
-              rows="3"
-              class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-accent"
-            ></textarea>
+            <label class="block font-label-md text-label-md text-on-surface mb-1">Description</label>
+            <textarea v-model="description" required maxlength="500" rows="3" class="w-full border border-outline-variant rounded-lg px-4 py-3 focus:ring-1 focus:ring-primary focus:border-primary outline-none bg-surface"></textarea>
           </div>
           <LoadingSpinner :visible="loading" />
-          <button
-            type="submit"
-            :disabled="loading"
-            class="w-full bg-brand-dark text-white py-2 rounded font-semibold hover:opacity-90 disabled:opacity-50"
-          >
-            Submit Registration
-          </button>
+          <button type="submit" :disabled="loading" class="w-full bg-primary text-on-primary py-3 rounded-lg font-label-md hover:bg-primary-container transition-all disabled:opacity-50">Submit Registration</button>
         </form>
       </div>
     </main>
@@ -82,17 +54,8 @@ async function handleRegister() {
   error.value = '';
   loading.value = true;
   try {
-    await api.post('/tenants/register', {
-      businessName: businessName.value,
-      contactEmail: contactEmail.value,
-      phone: phone.value,
-      description: description.value,
-    });
+    await api.post('/tenants/register', { business_name: businessName.value, contact_email: contactEmail.value, phone: phone.value, business_description: description.value });
     submitted.value = true;
-  } catch (err) {
-    error.value = extractError(err);
-  } finally {
-    loading.value = false;
-  }
+  } catch (err) { error.value = extractError(err); } finally { loading.value = false; }
 }
 </script>

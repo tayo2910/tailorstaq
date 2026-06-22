@@ -1,8 +1,6 @@
 <template>
   <div v-if="visible" class="flex items-center justify-center py-8">
-    <div
-      class="w-8 h-8 border-4 border-brand-accent border-t-transparent rounded-full animate-spin"
-    ></div>
+    <div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
   </div>
 </template>
 

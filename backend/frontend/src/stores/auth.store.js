@@ -27,7 +27,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function registerCustomer(fullName, email, password) {
     loading.value = true;
     try {
-      await api.post('/auth/register/customer', { fullName, email, password });
+      await api.post('/auth/register/customer', { full_name: fullName, email, password });
     } catch (err) {
       throw new Error(extractError(err));
     } finally {

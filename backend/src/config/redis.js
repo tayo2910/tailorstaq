@@ -28,6 +28,7 @@ export const redisClient = createClient({
   url: buildRedisUrl(),
   socket: {
     tls: config.redis.tls,
+    connectTimeout: 3_000,
     reconnectStrategy: (retries) => {
       // Exponential back-off capped at 30 s
       const delay = Math.min(1000 * 2 ** retries, 30_000);
@@ -50,12 +51,19 @@ redisClient.on('reconnecting', () => {
 });
 
 /**
- * Plain connection options object for BullMQ.
+ * Plain connection options object for BullMQ (ioredis-compatible).
  * BullMQ accepts `{ host, port, password, tls }` directly.
  */
 export const redisConnection = {
   host: config.redis.host,
   port: config.redis.port,
+  connectTimeout: 3_000,
+  maxRetriesPerRequest: null,
+  retryStrategy(times) {
+    const maxRetries = 2;
+    if (times > maxRetries) return null; // Give up
+    return Math.min(times * 200, 1_000);
+  },
   ...(config.redis.password ? { password: config.redis.password } : {}),
   ...(config.redis.tls ? { tls: {} } : {}),
 };
