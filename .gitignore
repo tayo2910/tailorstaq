@@ -1,0 +1,13 @@
+# design assets
+design-screens/
+stitch_tailorstaq_ai_management_platform.zip
+
+# supabase local config
+supabase/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
