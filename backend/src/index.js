@@ -64,6 +64,11 @@ app.get('*', (_req, res) => {
 
 // Only start the HTTP server when this file is run directly (not imported by tests)
 if (process.env.NODE_ENV !== 'test') {
+  // Auto-run pending DB migrations on startup
+  import('./db/migrate.js').then(({ runMigrations }) =>
+    runMigrations().catch(err => console.error('Migration error:', err.message))
+  ).catch(() => {});
+
   app.listen(env.PORT, () => {
     console.info(`TAILORSTAQ backend listening on port ${env.PORT}`);
   });

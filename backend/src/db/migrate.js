@@ -11,7 +11,7 @@
 
 import 'dotenv/config';
 import { readdir, readFile } from 'node:fs/promises';
-import { join, dirname } from 'node:path';
+import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import pg from 'pg';
 import { env } from '../config/env.js';
@@ -93,7 +93,12 @@ async function runMigrations() {
   }
 }
 
-runMigrations().catch((err) => {
-  console.error('Migration runner failed:', err.message);
-  process.exit(1);
-});
+export { runMigrations };
+
+// Auto-run only when executed directly (not when imported)
+if (process.argv[1] && resolve(fileURLToPath(import.meta.url)) === resolve(process.argv[1])) {
+  runMigrations().catch((err) => {
+    console.error('Migration runner failed:', err.message);
+    process.exit(1);
+  });
+}
