@@ -134,7 +134,7 @@ export async function processApproval({ requestId, action, rejection_reason }) {
 
   // 2. Fetch the approval request
   const requestResult = await query(
-    `SELECT id, business_name, contact_email, phone, business_description, status
+    `SELECT id, business_name, contact_email, phone, business_description, password_hash, status
      FROM approval_requests
      WHERE id = $1`,
     [requestId],
@@ -200,12 +200,16 @@ async function _approveRequest(approvalRequest) {
     );
     tenantId = tenantResult.rows[0].id;
 
-    // b. Create tenant_admin user with a temporary password
-    //    The tenant admin will need to reset their password on first login.
-    //    We generate a secure random temporary password.
-    const crypto = await import('crypto');
-    const tempPassword = crypto.randomBytes(16).toString('hex') + 'Aa1!';
-    const passwordHash = await hashPassword(tempPassword);
+    // b. Create tenant_admin user with the password provided during registration,
+    //    or a temporary password if none was stored.
+    let passwordHash;
+    if (approvalRequest.password_hash) {
+      passwordHash = approvalRequest.password_hash;
+    } else {
+      const crypto = await import('crypto');
+      const tempPassword = crypto.randomBytes(16).toString('hex') + 'Aa1!';
+      passwordHash = await hashPassword(tempPassword);
+    }
 
     await client.query(
       `INSERT INTO users (full_name, email, password_hash, role, tenant_id, account_status, failed_attempts)

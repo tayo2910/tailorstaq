@@ -27,6 +27,11 @@ jest.unstable_mockModule('../../src/db/queries/base.js', () => ({
 
 const mockEnqueueTenantConfirmationEmail = jest.fn().mockResolvedValue(undefined);
 
+jest.unstable_mockModule('../../src/utils/password.js', () => ({
+  hashPassword: jest.fn().mockResolvedValue('$2a$12$mockedhashpasswordhash1234567890abcdef'),
+  verifyPassword: jest.fn(),
+}));
+
 jest.unstable_mockModule('../../src/queues/email.queue.js', () => ({
   enqueueVerificationEmail: jest.fn().mockResolvedValue(undefined),
   enqueueAccountLockedEmail: jest.fn().mockResolvedValue(undefined),
@@ -190,6 +195,7 @@ describe('registerTenant', () => {
     business_name: 'NE Clothiers',
     contact_email: 'owner@neclothiers.com',
     phone: '+44 7911 123456',
+    password: 'SecurePass1',
     business_description: 'Bespoke tailoring for all occasions.',
   };
 

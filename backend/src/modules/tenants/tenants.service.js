@@ -11,6 +11,7 @@
  */
 
 import { query } from '../../db/queries/base.js';
+import { hashPassword } from '../../utils/password.js';
 import { enqueueTenantConfirmationEmail } from '../../queues/email.queue.js';
 
 // ─── Validation helpers ───────────────────────────────────────────────────────
@@ -80,6 +81,33 @@ function validateBusinessDescription(description) {
   return null;
 }
 
+/**
+ * Validate password: 8–128 characters with at least one uppercase, one lowercase, one digit.
+ * @param {string} password
+ * @returns {string|null} error message or null
+ */
+function validatePassword(password) {
+  if (typeof password !== 'string' || password.trim().length === 0) {
+    return 'Password is required.';
+  }
+  if (password.length < 8) {
+    return 'Password must be at least 8 characters.';
+  }
+  if (password.length > 128) {
+    return 'Password must be no more than 128 characters.';
+  }
+  if (!/[A-Z]/.test(password)) {
+    return 'Password must contain at least one uppercase letter.';
+  }
+  if (!/[a-z]/.test(password)) {
+    return 'Password must contain at least one lowercase letter.';
+  }
+  if (!/[0-9]/.test(password)) {
+    return 'Password must contain at least one digit.';
+  }
+  return null;
+}
+
 // ─── Registration ─────────────────────────────────────────────────────────────
 
 /**
@@ -105,6 +133,7 @@ export async function registerTenant({
   contact_email,
   phone,
   business_description,
+  password,
 }) {
   // 1. Validate inputs
   const validationErrors = [];
@@ -120,6 +149,9 @@ export async function registerTenant({
 
   const descriptionError = validateBusinessDescription(business_description);
   if (descriptionError) validationErrors.push(descriptionError);
+
+  const passwordError = validatePassword(password);
+  if (passwordError) validationErrors.push(passwordError);
 
   if (validationErrors.length > 0) {
     const err = new Error(validationErrors[0]);
@@ -153,17 +185,20 @@ export async function registerTenant({
     throw err;
   }
 
+  const passwordHash = await hashPassword(password);
+
   // 3. Insert approval_requests row with status = 'pending'
   const insertResult = await query(
     `INSERT INTO approval_requests
-       (business_name, contact_email, phone, business_description, status)
-     VALUES ($1, $2, $3, $4, 'pending')
-     RETURNING id`,
+        (business_name, contact_email, phone, business_description, password_hash, status)
+      VALUES ($1, $2, $3, $4, $5, 'pending')
+      RETURNING id`,
     [
       business_name.trim(),
       normalizedEmail,
       phone.trim(),
       business_description.trim(),
+      passwordHash,
     ],
   );
 
@@ -188,4 +223,4 @@ export async function registerTenant({
 }
 
 // Export validators for unit testing
-export { validateBusinessName, validateContactEmail, validatePhone, validateBusinessDescription };
+export { validateBusinessName, validateContactEmail, validatePhone, validatePassword, validateBusinessDescription };

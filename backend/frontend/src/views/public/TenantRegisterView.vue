@@ -24,6 +24,10 @@
             <input v-model="phone" required class="w-full border border-outline-variant rounded-lg px-4 py-3 focus:ring-1 focus:ring-primary focus:border-primary outline-none bg-surface" />
           </div>
           <div>
+            <label class="block font-label-md text-label-md text-on-surface mb-1">Password</label>
+            <input v-model="password" type="password" required minlength="8" maxlength="128" class="w-full border border-outline-variant rounded-lg px-4 py-3 focus:ring-1 focus:ring-primary focus:border-primary outline-none bg-surface" />
+          </div>
+          <div>
             <label class="block font-label-md text-label-md text-on-surface mb-1">Description</label>
             <textarea v-model="description" required maxlength="500" rows="3" class="w-full border border-outline-variant rounded-lg px-4 py-3 focus:ring-1 focus:ring-primary focus:border-primary outline-none bg-surface"></textarea>
           </div>
@@ -45,6 +49,7 @@ import ErrorBanner from '../../components/common/ErrorBanner.vue';
 const businessName = ref('');
 const contactEmail = ref('');
 const phone = ref('');
+const password = ref('');
 const description = ref('');
 const error = ref('');
 const loading = ref(false);
@@ -54,7 +59,7 @@ async function handleRegister() {
   error.value = '';
   loading.value = true;
   try {
-    await api.post('/tenants/register', { business_name: businessName.value, contact_email: contactEmail.value, phone: phone.value, business_description: description.value });
+    await api.post('/tenants/register', { business_name: businessName.value, contact_email: contactEmail.value, phone: phone.value, password: password.value, business_description: description.value });
     submitted.value = true;
   } catch (err) { error.value = extractError(err); } finally { loading.value = false; }
 }

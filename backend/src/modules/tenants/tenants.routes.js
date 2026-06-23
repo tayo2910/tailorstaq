@@ -28,12 +28,13 @@ const router = Router();
  */
 router.post('/register', async (req, res) => {
   try {
-    const { business_name, contact_email, phone, business_description } = req.body;
+    const { business_name, contact_email, phone, business_description, password } = req.body;
     const result = await registerTenant({
       business_name,
       contact_email,
       phone,
       business_description,
+      password,
     });
     return res.status(201).json(result);
   } catch (err) {
