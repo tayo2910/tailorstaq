@@ -69,6 +69,11 @@ if (process.env.NODE_ENV !== 'test') {
     runMigrations().catch(err => console.error('Migration error:', err.message))
   ).catch(() => {});
 
+  // Seed default admin user (idempotent)
+  import('./db/seed.js').then(({ seed }) =>
+    seed().catch(err => console.error('Seed error:', err.message))
+  ).catch(() => {});
+
   app.listen(env.PORT, () => {
     console.info(`TAILORSTAQ backend listening on port ${env.PORT}`);
   });
