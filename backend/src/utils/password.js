@@ -7,7 +7,7 @@
  * verifyPassword(plain, hash) — compares a plaintext password against a stored hash
  */
 
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { env } from '../config/env.js';
 
 /**
