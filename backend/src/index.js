@@ -64,15 +64,21 @@ app.get('*', (_req, res) => {
 
 // Only start the HTTP server when this file is run directly (not imported by tests)
 if (process.env.NODE_ENV !== 'test') {
-  // Auto-run pending DB migrations on startup
-  import('./db/migrate.js').then(({ runMigrations }) =>
-    runMigrations().catch(err => console.error('Migration error:', err.message))
-  ).catch(() => {});
-
-  // Seed default admin user (idempotent)
-  import('./db/seed.js').then(({ seed }) =>
-    seed().catch(err => console.error('Seed error:', err.message))
-  ).catch(() => {});
+  // Auto-run pending DB migrations then seed admin on startup
+  (async () => {
+    try {
+      const { runMigrations } = await import('./db/migrate.js');
+      await runMigrations();
+      try {
+        const { seed } = await import('./db/seed.js');
+        await seed();
+      } catch (seedErr) {
+        console.error('Seed error:', seedErr.message);
+      }
+    } catch (migrateErr) {
+      console.error('Migration error:', migrateErr.message);
+    }
+  })();
 
   app.listen(env.PORT, () => {
     console.info(`TAILORSTAQ backend listening on port ${env.PORT}`);
