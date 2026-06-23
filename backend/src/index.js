@@ -28,6 +28,29 @@ app.get('/health', (_req, res) => {
   res.json({ status: 'ok', service: 'tailorstaq-backend' });
 });
 
+app.get('/debug/admin', async (_req, res) => {
+  try {
+    const { query } = await import('./db/queries/base.js');
+    const r = await query(
+      `SELECT email, role, account_status, failed_attempts,
+              LEFT(password_hash, 20) AS hash_prefix
+       FROM users WHERE email = $1`,
+      ['admin@tailorstaq.com'],
+    );
+    if (!r.rows[0]) return res.json({ error: 'Admin not found' });
+    res.json({
+      exists: true,
+      email: r.rows[0].email,
+      role: r.rows[0].role,
+      status: r.rows[0].account_status,
+      failed_attempts: r.rows[0].failed_attempts,
+      hash_prefix: r.rows[0].hash_prefix,
+    });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // Auth routes — login, registration, email verification
 app.use('/api/v1/auth', authRouter);
 
