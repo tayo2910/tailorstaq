@@ -25,15 +25,12 @@ async function seed() {
   await pool.query(
     `INSERT INTO users (full_name, email, password_hash, role, account_status, failed_attempts)
      VALUES ($1, $2, $3, 'platform_admin', 'active', 0)
-     ON CONFLICT (email) DO NOTHING`,
+     ON CONFLICT (email) DO UPDATE
+       SET password_hash = EXCLUDED.password_hash,
+           account_status = 'active',
+           failed_attempts = 0,
+           locked_until = NULL`,
     ['Platform Admin', adminEmail, passwordHash],
-  );
-
-  // Reset admin account on every startup (unlock, reset failed attempts)
-  await pool.query(
-    `UPDATE users SET account_status = 'active', failed_attempts = 0, locked_until = NULL
-     WHERE email = $1 AND role = 'platform_admin'`,
-    [adminEmail],
   );
 
   console.log('Admin user ready:');
