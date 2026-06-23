@@ -14,6 +14,7 @@ import ordersRouter, { customerOrdersRouter } from './modules/orders/orders.rout
 import receiptsRouter from './modules/receipts/receipts.routes.js';
 import subscriptionsRouter from './modules/subscriptions/subscriptions.routes.js';
 import customersRouter from './modules/customers/customers.routes.js';
+import { query } from './db/queries/base.js';
 
 const app = express();
 
@@ -30,7 +31,6 @@ app.get('/health', (_req, res) => {
 
 app.get('/debug/admin', async (_req, res) => {
   try {
-    const { query } = await import('./db/queries/base.js');
     const r = await query(
       `SELECT email, role, account_status, failed_attempts,
               LEFT(password_hash, 20) AS hash_prefix
