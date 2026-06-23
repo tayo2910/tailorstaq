@@ -1,7 +1,7 @@
 <template>
   <div>
     <section class="mb-stack-md">
-      <h2 class="font-display text-headline-md text-on-surface">Welcome back, Artisan</h2>
+      <h2 class="font-display text-headline-md text-on-surface">Welcome back, {{ authStore.user?.fullName || 'Artisan' }}</h2>
       <p class="font-body-md text-on-surface-variant">Here is your business performance for this month.</p>
     </section>
     <div class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-stack-md">
@@ -112,6 +112,8 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import api from '../../api/index.js';
+import { useAuthStore } from '../../stores/auth.store.js';
+const authStore = useAuthStore();
 
 const recentOrders = ref([]);
 
