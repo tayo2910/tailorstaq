@@ -4,9 +4,9 @@
       <div class="absolute inset-0 bg-primary/40 backdrop-blur-[2px]"></div>
       <div class="relative z-10 text-center px-6">
         <div class="mb-4 inline-block px-4 py-2 bg-on-primary-container/80 backdrop-blur-md rounded-lg">
-          <span class="font-label-md text-label-md text-primary uppercase tracking-widest">{{ shop?.name || 'Heritage Stitches' }}</span>
+          <span class="font-label-md text-label-md text-primary uppercase tracking-widest">{{ shop?.name || 'Your Shop' }}</span>
         </div>
-        <h2 class="font-display text-headline-lg-mobile md:text-headline-lg text-white mb-6">Redefining Ancestral Craft for the Modern World</h2>
+        <h2 class="font-display text-headline-lg-mobile md:text-headline-lg text-white mb-6">{{ shop?.name || 'Your Shop' }} — Bespoke Tailoring, Crafted for You</h2>
         <button class="bg-primary text-white font-label-md text-label-md px-8 py-4 rounded-[4px] shadow-lg hover:bg-primary-container transition-all active:scale-95">Book Appointment</button>
       </div>
     </section>
