@@ -29,7 +29,14 @@ async function seed() {
     ['Platform Admin', adminEmail, passwordHash],
   );
 
-  console.log('Admin user created:');
+  // Reset admin account on every startup (unlock, reset failed attempts)
+  await pool.query(
+    `UPDATE users SET account_status = 'active', failed_attempts = 0, locked_until = NULL
+     WHERE email = $1 AND role = 'platform_admin'`,
+    [adminEmail],
+  );
+
+  console.log('Admin user ready:');
   console.log(`  Email:    ${adminEmail}`);
   console.log(`  Password: ${adminPassword}`);
   console.log('\nLogin at /admin/approvals to approve tailor registrations.');
