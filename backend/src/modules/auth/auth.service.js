@@ -377,5 +377,5 @@ export async function login({ email, password }) {
     tenantId: user.tenant_id ?? null,
   });
 
-  return { token };
+  return { token, userId: user.id, role: user.role, fullName: user.full_name };
 }
